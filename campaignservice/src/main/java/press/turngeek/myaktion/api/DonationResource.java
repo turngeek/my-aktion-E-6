@@ -20,7 +20,7 @@ import press.turngeek.myaktion.model.Donation;
 @Path("/donation")
 public class DonationResource {
     @Inject
-    private DonationService donationService;
+    DonationService donationService;
 
     @GET
     @Path("/list/{campaignId}")
