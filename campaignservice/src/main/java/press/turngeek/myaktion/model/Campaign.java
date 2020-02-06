@@ -2,21 +2,54 @@ package press.turngeek.myaktion.model;
 
 import java.util.List;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  * Campaign
  */
-public class Campaign {
-    private String name;
-    private Double targetAmount;
-    private Double donationMinimum;
-    private Double amountDonatedSoFar;
-    private Account account;
-    private Long id;
-    private List<Donation> donations;
+@NamedQueries({
+    @NamedQuery(name = Campaign.findAll, query = "SELECT a FROM Campaign a ORDER BY a.name")
+})
 
-    public Campaign() {
-        account = new Account();
-    }
+@Entity
+public class Campaign {
+    @NotNull
+    @Size(min = 3, max = 30)
+    private String name;
+    @NotNull
+    @DecimalMin(value = "10.00")
+    private Double targetAmount;
+    @NotNull
+    @DecimalMin(value = "1.00")
+    private Double donationMinimum;
+    @Transient
+    private Double amountDonatedSoFar;
+    public static final String findAll="Campaign.findAll";
+    @AttributeOverrides({@AttributeOverride(name="name", column=@Column(name="accountName"))})
+    
+    @Embedded
+    @Valid
+    private Account account;
+    @GeneratedValue
+    @Id
+    private Long id;
+    @OneToMany(mappedBy = "campaign", cascade = CascadeType.REMOVE)
+    private List<Donation> donations;
 
     public String getName() {
         return name;

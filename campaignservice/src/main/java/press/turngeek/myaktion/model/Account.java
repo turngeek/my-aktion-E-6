@@ -1,25 +1,37 @@
 package press.turngeek.myaktion.model;
 
+import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 /**
  * Account
  */
+@Embeddable
 public class Account {
+
+    @NotNull
+    @Size(min=3, max=60)
     private String name;
+    @NotNull
+    @Size(min=3, max=40)
     private String nameOfBank;
+    @NotNull
+    @Pattern(regexp="[A-Z]{2}[0-9]{2}[A-Z0-9]{12,30}")
     private String iban;
 
-    public Account() {
-        this(null, null, null);
+	public Account() {
+        this(null,null,null);
     }
+    
+    public Account(String name, String iban, String nameOfBank) {
+        this.name=name;
+        this.nameOfBank=nameOfBank;
+        this.iban=iban;
+	}
 
-    public Account(String name, String nameOfBank, String iban) {
-        super();
-        this.name = name;
-        this.nameOfBank = nameOfBank;
-        this.iban = iban;
-    }
-
-    public String getName() {
+	public String getName() {
         return name;
     }
 
