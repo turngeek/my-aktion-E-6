@@ -1,29 +1,36 @@
 package press.turngeek.myaktion.boundary;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 
-import press.turngeek.myaktion.data.CampaignListProducer;
 import press.turngeek.myaktion.model.Campaign;
 import press.turngeek.myaktion.model.Donation;
 
 /**
- * DonationService
+ * DonationServiceBean
  */
-@Dependent
+@Transactional
+@ApplicationScoped
 public class DonationService {
 
     @Inject
-    CampaignListProducer campaignListProducer;
+    EntityManager em;
 
-    public List<Donation> getDonationList(Long campaignId) {
-        return campaignListProducer.findCampaign(campaignId).getDonations();
+    public List<Donation> getDonations(Long campaignId) {
+        Campaign managedCampaign = em.find(Campaign.class, campaignId);
+        List<Donation> donations = new ArrayList<>(managedCampaign.getDonations());
+        return donations;
     }
-
-    public void addDonation(Long campaignId, Donation donation) {
-        Campaign campaign = campaignListProducer.findCampaign(campaignId);
-        campaign.getDonations().add(donation);
-    } 
+    
+    public void addDonation(Long campaignId, @Valid Donation donation) {
+        Campaign managedCampaign = em.find(Campaign.class, campaignId);
+        donation.setCampaign(managedCampaign);
+        em.persist(donation);
+    }
 }

@@ -4,39 +4,48 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 
-import press.turngeek.myaktion.data.CampaignListProducer;
 import press.turngeek.myaktion.model.Campaign;
 
 /**
- * CampaignService
+ * CampaignServiceBean
  */
 @ApplicationScoped
+@Transactional
 public class CampaignService {
 
     @Inject
-    CampaignListProducer campaignListProducer;
+    EntityManager em;
 
     public List<Campaign> getCampaigns() {
-        return campaignListProducer.getCampaigns();
+        TypedQuery<Campaign> query = em.createNamedQuery(Campaign.findAll, Campaign.class);
+        List<Campaign> campaigns = query.getResultList();
+        return campaigns;
     }
 
     public Campaign getCampaign(Long campaignId) {
-        return campaignListProducer.findCampaign(campaignId);
+        Campaign campaign = em.find(Campaign.class, campaignId);
+        return campaign;
     }
 
     public void deleteCampaign(Long campaignId) {
-        campaignListProducer.getCampaigns().remove(campaignListProducer.findCampaign(campaignId));
+        Campaign managedCampaign = em.find(Campaign.class, campaignId);
+        em.remove(managedCampaign);
     }
 
-    public Campaign addCampaign(Campaign campaign) {
-        campaignListProducer.getCampaigns().add(campaign);
-        return campaignListProducer.findCampaign(campaign.getId());
+    public Campaign addCampaign(@Valid Campaign campaign) {
+        em.persist(campaign);
+        return campaign;
     }
 
-    public Campaign updateCampaign(Campaign campaign) {
-        deleteCampaign(campaign.getId());
-        addCampaign(campaign);
-        return campaignListProducer.findCampaign(campaign.getId());
+    public Campaign updateCampaign(@Valid Campaign campaign) {
+        em.merge(campaign);
+        return campaign;
     }
+
+    
 }
