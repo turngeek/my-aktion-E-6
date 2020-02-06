@@ -24,16 +24,13 @@ import press.turngeek.myaktion.model.Campaign;
 public class CampaignResource {
 
     @Inject
-    private CampaignService campaignService;
+    CampaignService campaignService;
 
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Campaign> getAllCampaigns() {
+    public List<Campaign> getCampaigns() {
         List<Campaign> allCampaigns = campaignService.getCampaigns();
-        allCampaigns.forEach(campaign -> {
-            campaign.setDonations(null);
-        });
         return allCampaigns;
     }
 

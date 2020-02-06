@@ -15,12 +15,8 @@ import press.turngeek.myaktion.model.Donation;
 @Dependent
 public class DonationService {
 
-    private CampaignListProducer campaignListProducer;
-
     @Inject
-    public DonationService(CampaignListProducer campaignListProducer) {
-        this.campaignListProducer = campaignListProducer;
-    }
+    CampaignListProducer campaignListProducer;
 
     public List<Donation> getDonationList(Long campaignId) {
         return campaignListProducer.findCampaign(campaignId).getDonations();

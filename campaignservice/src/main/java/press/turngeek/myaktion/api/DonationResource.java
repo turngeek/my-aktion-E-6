@@ -25,7 +25,7 @@ public class DonationResource {
     @GET
     @Path("/list/{campaignId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Donation> getDonationList(@PathParam(value = "campaignId") Long campaignId) {
+    public List<Donation> getDonations(@PathParam(value = "campaignId") Long campaignId) {
         List<Donation> donations = donationService.getDonationList(campaignId);
         return donations;
     }

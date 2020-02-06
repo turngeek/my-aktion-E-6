@@ -2,7 +2,7 @@ package press.turngeek.myaktion.boundary;
 
 import java.util.List;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import press.turngeek.myaktion.data.CampaignListProducer;
@@ -11,7 +11,7 @@ import press.turngeek.myaktion.model.Campaign;
 /**
  * CampaignService
  */
-@Dependent
+@ApplicationScoped
 public class CampaignService {
 
     @Inject

@@ -3,7 +3,8 @@ package press.turngeek.myaktion.data;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.enterprise.context.Dependent;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 
 import press.turngeek.myaktion.model.Account;
 import press.turngeek.myaktion.model.Campaign;
@@ -12,16 +13,12 @@ import press.turngeek.myaktion.model.Donation.Status;
 
 /**
  * CampaignListProducer
- * TODO Optimize scopes of beans
+ * 
  */
-@Dependent
+@ApplicationScoped
 public class CampaignListProducer {
 
     private List<Campaign> campaigns;
-
-    public CampaignListProducer() {
-        campaigns = createMockCampaigns();
-    }
 
     public List<Campaign> getCampaigns() {
         return campaigns;
@@ -78,5 +75,10 @@ public class CampaignListProducer {
         ret.add(campaign1);
         ret.add(campaign2);
         return ret;
-    }   
+    }
+
+    @PostConstruct
+    void init() {
+        campaigns = createMockCampaigns();
+    } 
 }
