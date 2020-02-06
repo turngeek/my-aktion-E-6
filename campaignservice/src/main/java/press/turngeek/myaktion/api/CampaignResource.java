@@ -31,6 +31,7 @@ public class CampaignResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Campaign> getCampaigns() {
         List<Campaign> allCampaigns = campaignService.getCampaigns();
+        allCampaigns.forEach(campaign -> campaign.setDonations(null));
         return allCampaigns;
     }
 
