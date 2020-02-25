@@ -1,0 +1,18 @@
+version: "3.3"
+services:
+  campaigns:
+    build:
+      context: ./campaignservice
+      dockerfile: ./src/main/docker/Dockerfile.jvm
+    depends_on:
+      - campaigns_db
+    ports:
+      - "8080:8080"
+  campaigns_db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=my-aktion_db
