@@ -23,8 +23,8 @@ import javax.validation.constraints.Size;
  * Campaign
  */
 @NamedQueries({
-    @NamedQuery(name = Campaign.findAll, query = "SELECT a FROM Campaign a ORDER BY a.name")
-})
+    @NamedQuery(name = Campaign.findAll, query = "SELECT a FROM Campaign a ORDER BY a.name"),
+    @NamedQuery(name = Campaign.findbyOrganizerName, query = "SELECT c FROM Campaign c WHERE c.organizerName = :organizerName ORDER BY c.name")})
 
 @Entity
 public class Campaign {
@@ -40,6 +40,7 @@ public class Campaign {
     @Transient
     private Double amountDonatedSoFar;
     public static final String findAll="Campaign.findAll";
+    public static final String findbyOrganizerName="Campaign.findbyOrganizerName";
     @AttributeOverrides({@AttributeOverride(name="name", column=@Column(name="accountName"))})
     
     @Embedded
@@ -50,6 +51,9 @@ public class Campaign {
     private Long id;
     @OneToMany(mappedBy = "campaign", cascade = CascadeType.REMOVE)
     private List<Donation> donations;
+
+    @NotNull
+    private String organizerName;
 
     public String getName() {
         return name;
@@ -105,5 +109,13 @@ public class Campaign {
 
     public void setDonations(List<Donation> donations) {
         this.donations = donations;
+    }
+
+    public void setOrganizerName(String organizerName) {
+        this.organizerName=organizerName;
+    }
+
+    public String getOrganizerName() {
+        return this.organizerName;
     }
 }
