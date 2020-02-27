@@ -20,6 +20,8 @@ In this branch, we introduce the persistence layer. We use the h2 database. The 
 * Change resource service classes to avoid cycles during JSON generation because of bidirectional entity relations.
 * Provide a file import.sql containing some insert statements in order to have a database containing sample data after startup.
 
+## How to build and run the branches seed, basics and jpa-h2?
+
 ### Build:
 
 `mvn package`
@@ -47,6 +49,30 @@ database. Therefore, we don't have to program anything, but we have to configure
 * We have to change the driver dependency in the pom.xml from h2 to postgresql.
 * We have to change the db configuration in file applications.properties.
 * Finally, since we now have two containers, we use docker-compose to be able to startup both in the correct order.
+
+## Branch: security
+
+In this branch, we secure our services using JWT and Java EE security annotations and classes. We use a little helper application [jwtenizr](https://github.com/AdamBien/jwtenizr) from Adam Bien that generate public/private keys, JWT token and application.properties configuration. Please be aware that the generated tokens have an expiration date. If you want to test the services, you probably have to generate a new token using jwtenizr.
+
+We did the following steps:
+
+* Download and Store the current `jwtenizr.jar` in the root of the campaignservice project.
+* Execute `java -jar jwtenizr.jar` once again to generate all files with dummy values.
+* Adapt the files especially `jwt-token.json` to our needs for the service (issuer my-aktion-auth, upn max@mustermann.de, group Organizer...)
+* Add smallrye-jwt dependency in `pom.xml` (MicroProfile implementation of jwt).
+* Execute `java -jar jwtenizr.jar` again if you want to have a valid token for the principal max@mustermann.de with role Organizer.
+* Update `application.properties` with the key-value-pairs from microprofile-config.properties (issuer and public key).
+* Secure the endpoints of the REST services with security annotations (@PermitAll or @RolesAllowed).
+* Add new attribute organizerName to Entity Campaign and update NamedQueries. Inject Principal in order to use the principalName as organizerName.
+* Adapt import.sql!
+* Finally, avoid forbidden operations of authorized users (e.g. delete campaigns of other ogranizers or list donations of campaigns from other organizers).
+
+Hint: if you want to test the services in the branch, execute jwtenizr again to produce a new and valid token for user max@mustermann.de. In the console you'll a curl command. You just have to adapt the URI of the service you want to call:
+
+`curl -i -H'Authorization: Bearer eyJraWQiOiJqd3Qua2V5IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJNYXggTXVzdGVybWFubiIsInVwbiI6Im1heEBtdXN0ZXJtYW5uLmRlIiwiYXV0aF90aW1lIjoxNTgyNzIzODE2LCJpc3MiOiJteS1ha3Rpb24tYXV0aCIsImdyb3VwcyI6WyJPcmdhbml6ZXIiXSwiZXhwIjoxNTgyNzI0ODE2LCJpYXQiOjE1ODI3MjM4MTYsImp0aSI6IjQyIn0.FlJoDdy8tAyB0Hjnr-NLUZQXw6WprdrXgvs_Y_7KvIODY6Ckhi7WtCXJiteWywhsKDrFJxRw8PaVWHelIsyqZiNj9pd27R58CWP-2kzBP2rjJQRtW5JNQ_uR74JEipM99hl8UFtT2qf9gyX-kP_acmxpi7z2LJHO8i0PzDTkXttIM6C6y6YfLBzCf9NARAEZZ4GiLsbYBWZ7_6vRtgOPKkViUf76-NAKgqNF5xCYAeUgD49iIfpA8_w0qt7H4D0oFdzgLrfuJvNrWFR54Yfo3_LDc8NwSwXDt4qPgYo1O5PwrMRn7ns4mK4ARQ5rSUIe5LAo33G9ARt69Gcm-qouPg' http://localhost:8080/campaign/list`
+
+
+## How to build and run the branches postgres and security?
 
 ### Run:
 
